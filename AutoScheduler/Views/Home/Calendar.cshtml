@@ -1,0 +1,114 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="https://cdn.dhtmlx.com/scheduler/edge/dhtmlxscheduler_material.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/suite_trial/codebase/suite.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.dhtmlx.com/scheduler/edge/dhtmlxscheduler.js"></script>
+    <script src="~/Content/dhtmlxscheduler_serialize.js"></script>
+    <script src="~/Content/suite_trial/codebase/suite.js"></script>
+    <script>
+        function SaveTask() {
+            var data = {
+                    Name: $("#TaskName").text(), DueDate: $("#TaskDueDate").val(), StartDate: $("#TaskStartDate").val(), Priority: $("#TaskPriority").val(), ETA: $("#TaskETA").val()
+                };
+            alert(data);
+            $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("SaveTask")",
+                    data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data){alert(data);},
+                failure: function(errMsg) {
+                    alert(errMsg);
+                }
+            });
+            return;
+        }
+        var dhxWindow = new dhx.Window({
+            modal: true,
+            resizable: true,
+            movable: true
+        });
+        dhxWindow.setSize(550,500);
+        var html = '<div class="dhx_cal_light dhx_cal_light_wide" style="margin-top:-80px" aria-hidden="false">';
+        html = html + '<div class="dhx_cal_ltitle" role = "heading" style = "cursor: move;" > <span class="dhx_title"> New Task</span></div >';
+        html = html + '<div class="dhx_cal_larea" style = "height: 500;" >';
+        html = html + '<div class="dhx_wrap_section" >';
+        html = html + '<div class="dhx_cal_lsection"><label for="name">Name</label></div>';
+        html = html + '<div class="dhx_cal_ltext" style="height:64px;"><textarea id="TaskName"></textarea></div>';
+        html = html + '</div >';
+        html = html + '<div class="dhx_wrap_section" >';
+        html = html + '<div class="dhx_cal_lsection"><label for="name">Start Date</label></div>';
+        html = html + '<div class="dhx_cal_ltext" style="height:64px;"><input type="text" id="TaskStartDate"></input></div>';
+        html = html + '</div >';
+        html = html + '<div class="dhx_wrap_section" >';
+        html = html + '<div class="dhx_cal_lsection"><label for="name">Due Date</label></div>';
+        html = html + '<div class="dhx_cal_ltext" style="height:64px;"><input type="text" id="TaskDueDate"></input></div>';
+        html = html + '</div >';
+        html = html + '<div class="dhx_wrap_section" >';
+        html = html + '<div class="dhx_cal_lsection"><label for="name">Est Completion Time</label></div>';
+        html = html + '<div class="dhx_cal_ltext" style="height:64px;"><input type="text" id="TaskETA"></input></div>';
+        html = html + '</div >';
+        html = html + '<div class="dhx_wrap_section" >';
+        html = html + '<div class="dhx_cal_lsection"><label style="width:200px;" for="name">Priority</label></div>';
+        html = html + '<div class="dhx_cal_ltext" style="height:64px;"><input type="text" id="TaskPriority"></input></div>';
+        html = html + '</div >';
+        html = html + '<div tabindex="0" class="dhx_btn_set dhx_right_btn_set dhx_save_btn_set" role="button" style="float:right;" aria-label="Save" onclick="SaveTask();"><div class="dhx_save_btn" dhx_button="1"></div><div>Save</div></div></div ></div > ';
+        dhxWindow.attachHTML(html);
+        document.addEventListener("DOMContentLoaded", function (event) {
+            // initializing scheduler
+            scheduler.init("scheduler_here", new Date(2020, 1, 19));
+            var dataString = $("#calEvents").text();
+            var data = JSON.parse(dataString);
+            scheduler.parse(data, "json");
+            scheduler.attachEvent("onEventSave", function (id, ev, is_new) {
+                alert();
+                var calEvent = {
+                    eventID: id, start_date: ev.start_date, end_date: ev.end_date, text: ev.text
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("SaveEvent")",
+                    data: JSON.stringify(calEvent),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data){alert(data);},
+                failure: function(errMsg) {
+                    alert(errMsg);
+                }
+            });
+                return true;
+})
+        });
+    </script>
+</head>
+
+
+<p hidden id="calEvents">@ViewBag.calEvents</p>
+
+<body>
+    <div style="margin-top:10px">
+        <div class="col-lg-10"></div>
+        <div class="col-lg-2" style="float:right"><button style="float:right;width:65%" class="form-control btn-primary" onclick="dhxWindow.show()">Create Task</button></div>
+    </div>
+    <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100vh;'>
+        <div class="dhx_cal_navline">
+            <div class="dhx_cal_prev_button">&nbsp;</div>
+            <div class="dhx_cal_next_button">&nbsp;</div>
+            <div class="dhx_cal_today_button"></div>
+            <div class="dhx_cal_date"></div>
+            <div class="dhx_cal_tab" name="day_tab"></div>
+            <div class="dhx_cal_tab" name="week_tab"></div>
+            <div class="dhx_cal_tab" name="month_tab"></div>
+        </div>
+        <div class="dhx_cal_header"></div>
+        <div class="dhx_cal_data"></div>
+    </div>
+    <div class="dhx_input__wrapper"><div class="dhx_input__container"><div class="dhx_input__icon dxi dxi-calendar-today"></div><input class="dhx_input dhx_input--icon-padding" id="u1582576331136" type="text" readonly="" placeholder="" autocomplete="off"></div></div>
+</body>
+</html>

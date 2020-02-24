@@ -1,0 +1,356 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="AutoSchedulerDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CalendarEvent">
+          <Key>
+            <PropertyRef Name="eventID" />
+          </Key>
+          <Property Name="eventID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="taskID" Type="int" />
+          <Property Name="startDate" Type="datetime" />
+          <Property Name="endDate" Type="datetime" />
+          <Property Name="status" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="taskID" />
+          </Key>
+          <Property Name="taskID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userID" Type="int" />
+          <Property Name="name" Type="varchar" MaxLength="50" />
+          <Property Name="notes" Type="varchar(max)" />
+          <Property Name="priority" Type="int" />
+          <Property Name="dueDate" Type="datetime" />
+          <Property Name="estCompletionMinutes" Type="int" />
+          <Property Name="categoryID" Type="int" />
+          <Property Name="isAutoSchedule" Type="bit" />
+          <Property Name="startDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TaskCategory">
+          <Key>
+            <PropertyRef Name="CategoryID" />
+          </Key>
+          <Property Name="CategoryID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userID" Type="int" />
+          <Property Name="name" Type="varchar" MaxLength="50" />
+          <Property Name="color" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="email" Type="varchar" MaxLength="100" />
+          <Property Name="password" Type="varchar" MaxLength="50" />
+          <Property Name="firstName" Type="varchar" MaxLength="50" />
+          <Property Name="lastName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="UserPreference">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="int" Nullable="false" />
+          <Property Name="dayStart" Type="datetime" />
+          <Property Name="dayEnd" Type="datetime" />
+          <Property Name="dailyHours" Type="int" />
+        </EntityType>
+        <Association Name="FK_CalendarEvent_Task">
+          <End Role="Task" Type="Self.Task" Multiplicity="0..1" />
+          <End Role="CalendarEvent" Type="Self.CalendarEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Task">
+              <PropertyRef Name="taskID" />
+            </Principal>
+            <Dependent Role="CalendarEvent">
+              <PropertyRef Name="taskID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Task" Type="Self.Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="Task">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TaskCategory_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="TaskCategory" Type="Self.TaskCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="TaskCategory">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserPreference_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="UserPreference" Type="Self.UserPreference" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="UserPreference">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AutoSchedulerDBModelStoreContainer">
+          <EntitySet Name="CalendarEvent" EntityType="Self.CalendarEvent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Task" EntityType="Self.Task" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TaskCategory" EntityType="Self.TaskCategory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserPreference" EntityType="Self.UserPreference" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_CalendarEvent_Task" Association="Self.FK_CalendarEvent_Task">
+            <End Role="Task" EntitySet="Task" />
+            <End Role="CalendarEvent" EntitySet="CalendarEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_User" Association="Self.FK_Task_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Task" EntitySet="Task" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TaskCategory_User" Association="Self.FK_TaskCategory_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="TaskCategory" EntitySet="TaskCategory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserPreference_User" Association="Self.FK_UserPreference_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="UserPreference" EntitySet="UserPreference" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AutoSchedulerDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CalendarEvent">
+          <Key>
+            <PropertyRef Name="eventID" />
+          </Key>
+          <Property Name="eventID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="taskID" Type="Int32" />
+          <Property Name="startDate" Type="DateTime" Precision="3" />
+          <Property Name="endDate" Type="DateTime" Precision="3" />
+          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Task" Relationship="Self.FK_CalendarEvent_Task" FromRole="CalendarEvent" ToRole="Task" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="taskID" />
+          </Key>
+          <Property Name="taskID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int32" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="priority" Type="Int32" />
+          <Property Name="dueDate" Type="DateTime" Precision="3" />
+          <Property Name="estCompletionMinutes" Type="Int32" />
+          <Property Name="categoryID" Type="Int32" />
+          <Property Name="isAutoSchedule" Type="Boolean" />
+          <Property Name="startDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="CalendarEvents" Relationship="Self.FK_CalendarEvent_Task" FromRole="Task" ToRole="CalendarEvent" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Task_User" FromRole="Task" ToRole="User" />
+        </EntityType>
+        <EntityType Name="TaskCategory">
+          <Key>
+            <PropertyRef Name="CategoryID" />
+          </Key>
+          <Property Name="CategoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int32" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="color" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="User" Relationship="Self.FK_TaskCategory_User" FromRole="TaskCategory" ToRole="User" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="firstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="lastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Tasks" Relationship="Self.FK_Task_User" FromRole="User" ToRole="Task" />
+          <NavigationProperty Name="TaskCategories" Relationship="Self.FK_TaskCategory_User" FromRole="User" ToRole="TaskCategory" />
+          <NavigationProperty Name="UserPreference" Relationship="Self.FK_UserPreference_User" FromRole="User" ToRole="UserPreference" />
+        </EntityType>
+        <EntityType Name="UserPreference">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="Int32" Nullable="false" />
+          <Property Name="dayStart" Type="DateTime" Precision="3" />
+          <Property Name="dayEnd" Type="DateTime" Precision="3" />
+          <Property Name="dailyHours" Type="Int32" />
+          <NavigationProperty Name="User" Relationship="Self.FK_UserPreference_User" FromRole="UserPreference" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_CalendarEvent_Task">
+          <End Role="Task" Type="Self.Task" Multiplicity="0..1" />
+          <End Role="CalendarEvent" Type="Self.CalendarEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Task">
+              <PropertyRef Name="taskID" />
+            </Principal>
+            <Dependent Role="CalendarEvent">
+              <PropertyRef Name="taskID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Task" Type="Self.Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="Task">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TaskCategory_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="TaskCategory" Type="Self.TaskCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="TaskCategory">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserPreference_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="UserPreference" Type="Self.UserPreference" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="UserPreference">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AutoSchedulerDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CalendarEvents" EntityType="Self.CalendarEvent" />
+          <EntitySet Name="Tasks" EntityType="Self.Task" />
+          <EntitySet Name="TaskCategories" EntityType="Self.TaskCategory" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="UserPreferences" EntityType="Self.UserPreference" />
+          <AssociationSet Name="FK_CalendarEvent_Task" Association="Self.FK_CalendarEvent_Task">
+            <End Role="Task" EntitySet="Tasks" />
+            <End Role="CalendarEvent" EntitySet="CalendarEvents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_User" Association="Self.FK_Task_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Task" EntitySet="Tasks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TaskCategory_User" Association="Self.FK_TaskCategory_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="TaskCategory" EntitySet="TaskCategories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserPreference_User" Association="Self.FK_UserPreference_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserPreference" EntitySet="UserPreferences" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AutoSchedulerDBModelStoreContainer" CdmEntityContainer="AutoSchedulerDBEntities">
+          <EntitySetMapping Name="CalendarEvents">
+            <EntityTypeMapping TypeName="AutoSchedulerDBModel.CalendarEvent">
+              <MappingFragment StoreEntitySet="CalendarEvent">
+                <ScalarProperty Name="eventID" ColumnName="eventID" />
+                <ScalarProperty Name="taskID" ColumnName="taskID" />
+                <ScalarProperty Name="startDate" ColumnName="startDate" />
+                <ScalarProperty Name="endDate" ColumnName="endDate" />
+                <ScalarProperty Name="status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tasks">
+            <EntityTypeMapping TypeName="AutoSchedulerDBModel.Task">
+              <MappingFragment StoreEntitySet="Task">
+                <ScalarProperty Name="taskID" ColumnName="taskID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="notes" ColumnName="notes" />
+                <ScalarProperty Name="priority" ColumnName="priority" />
+                <ScalarProperty Name="dueDate" ColumnName="dueDate" />
+                <ScalarProperty Name="estCompletionMinutes" ColumnName="estCompletionMinutes" />
+                <ScalarProperty Name="categoryID" ColumnName="categoryID" />
+                <ScalarProperty Name="isAutoSchedule" ColumnName="isAutoSchedule" />
+                <ScalarProperty Name="startDate" ColumnName="startDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TaskCategories">
+            <EntityTypeMapping TypeName="AutoSchedulerDBModel.TaskCategory">
+              <MappingFragment StoreEntitySet="TaskCategory">
+                <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="color" ColumnName="color" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="AutoSchedulerDBModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="firstName" ColumnName="firstName" />
+                <ScalarProperty Name="lastName" ColumnName="lastName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserPreferences">
+            <EntityTypeMapping TypeName="AutoSchedulerDBModel.UserPreference">
+              <MappingFragment StoreEntitySet="UserPreference">
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="dayStart" ColumnName="dayStart" />
+                <ScalarProperty Name="dayEnd" ColumnName="dayEnd" />
+                <ScalarProperty Name="dailyHours" ColumnName="dailyHours" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
