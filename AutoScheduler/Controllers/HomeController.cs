@@ -34,7 +34,8 @@ namespace AutoScheduler.Controllers
                     eventJsonString += ", \"start_date\": \"" + calEvent.startDate.Value.ToString("yyyy-MM-dd HH:mm") + "\"";
                     eventJsonString += ", \"end_date\": \"" + calEvent.endDate.Value.ToString("yyyy-MM-dd HH:mm") + "\" }";
                 }
-                eventJsonString += ",";
+                if(task.CalendarEvents.Any())
+                    eventJsonString += ",";
             }
             eventJsonString = eventJsonString.Substring(0, eventJsonString.Length - 1);
             eventJsonString += "]";
@@ -56,6 +57,9 @@ namespace AutoScheduler.Controllers
             db.Tasks.Add(task);
             db.Entry(task).State = EntityState.Added;
             db.SaveChanges();
+
+            SchedulingController scheduler = new SchedulingController();
+            scheduler.AddTask(task.taskID);
 
             return "";
         }
